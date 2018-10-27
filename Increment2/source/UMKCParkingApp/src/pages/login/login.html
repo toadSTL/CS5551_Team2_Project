@@ -9,27 +9,31 @@
         <form>
             <div class="container">
                 <ion-row justify-content-center>
-                    <h2>UMKC Parking App</h2>
+                    <h2>UMCK Parking App</h2>
                 </ion-row>
                 <ion-row justify-content-center>
                     <ion-col style="text-align: right;">
-                        <label for="id">ID : </label>
+                        <ion-label fixed for="email">Email : </ion-label>
                     </ion-col>
                     <ion-col>    
-                        <input type="text" placeholder="Enter Username" name="id" required>
+                        <ion-input type="text" placeholder="Enter email" name="email" id="email" [(ngModel)]="user.email" required></ion-input>
                     </ion-col>
                 </ion-row>
                 <ion-row justify-content-center>
                     <ion-col style="text-align: right;">
-                    <label for="pw">Password : </label>
+                    <ion-label fixed for="password">Password : </ion-label>
                     </ion-col>
                     <ion-col>
-                        <input type="password" placeholder="Enter Password" name="pw" required>
+                        <ion-input type="password" placeholder="Enter Password" name="password" id="password" [(ngModel)]="user.password" required>
+                        </ion-input>
                     </ion-col>
                 </ion-row>
                 <ion-row justify-content-center>
-                    <button ion-button type="submit" (click)="login()">Login</button>
-                    <button ion-button type="submit" (click)="goToSignUp()">Sign up</button>
+                    <button ion-button type="submit" (click)="login(user)">Login</button>
+                    <button ion-button type="submit" (click)="register()">Sign Up</button>
+                </ion-row>
+                <ion-row justify-content-center>
+                    <p id="logError"></p>
                 </ion-row>
             </div>
         

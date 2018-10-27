@@ -11,6 +11,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
+//Want to post to mongodb provided by node-red
 app.get('/posts', function(req, res) {
 
     console.log("posts!");

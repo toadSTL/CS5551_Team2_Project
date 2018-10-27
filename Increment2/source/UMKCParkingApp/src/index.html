@@ -19,15 +19,28 @@
   <script src="cordova.js"></script>
 
   <!-- un-comment this code to enable service worker
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log('service worker installed'))
-        .catch(err => console.error('Error', err));
-    }
-  </script>-->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+            .then(() => console.log('service worker installed'))
+            .catch(err => console.error('Error', err));
+        }
+    </script>-->
 
-  <link href="build/main.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/5.5.6/firebase.js"></script>
+    <script>
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyA1yy7B1myPUILTE2ztUm7Zu1d3U74Xq8E",
+        authDomain: "umkc-parking-app.firebaseapp.com",
+        databaseURL: "https://umkc-parking-app.firebaseio.com",
+        projectId: "umkc-parking-app",
+        storageBucket: "umkc-parking-app.appspot.com",
+        messagingSenderId: "309431257659"
+    };
+    firebase.initializeApp(config);
+    </script>
+    <link href="build/main.css" rel="stylesheet">
 
 </head>
 <body>

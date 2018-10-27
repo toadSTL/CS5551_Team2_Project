@@ -6,7 +6,7 @@
 
 <ion-content padding>
     <ion-list>
-        <button ion-item (click)="displayAvailability()" *ngFor="let lot of lotList">
+        <button ion-item (click)="displayAvailability(lot.name)" *ngFor="let lot of lotList">
             {{lot.name}}
         </button>
     </ion-list>

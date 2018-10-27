@@ -95,7 +95,12 @@ export class HomePage {
         );
     };
     
-    displayAvailability(){
+    /**
+     * Should take a lot name and return the availability for that lot
+     * Not totally certain, how to specify which lot name is clicked
+     */
+    displayAvailability(lotName: string){
+        console.log(lotName)
         let alert = this.alertCtrl.create({
             title: 'Test',
             subTitle: '10% Spaces Available',

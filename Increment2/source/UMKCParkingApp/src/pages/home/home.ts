@@ -109,5 +109,32 @@ export class HomePage {
         alert.present();
     
     }
+    
+    setUp(){
+        var testData = {
+            field1: "a",
+            field2: "b"
+        }
+        //var req = 
+        this.http.post('http://127.0.0.1:8081/setup',testData).subscribe(
+            data => {
+                console.log(data['_body']);
+            }, error => {
+                console.log(error);
+            });
+        
+        //then(data => {
+        //    console.log(data.data);
+        //}).catch(error => {
+        //    console.log(error.status);
+        //});
+        //req.success(function(data) {
+        //    console.log(data);
+        //    alert("Successful!")
+        //});
+        //req.error(function(data) {
+        //    alert( "failure message: " + JSON.stringify({data: data}));
+        //});
+    };
 
 }

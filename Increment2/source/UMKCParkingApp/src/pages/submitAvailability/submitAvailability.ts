@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient} from "@angular/common/http";
 import { NavController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
-import { SubmitAvailabilityPage} from '../submitAvailability/submitAvailability';
+
 
 /**
  * Interface for a single lot entry
@@ -44,10 +44,10 @@ export interface AvailabilityList {
 
 
 @Component({
-  selector: 'page-home',
-  templateUrl: 'home.html'
+  selector: 'page-submitAvailability',
+  templateUrl: 'submitAvailability.html'
 })
-export class HomePage {
+export class SubmitAvailabilityPage {
 
     lotList: LotList;
     aList: AvailabilityList;
@@ -116,9 +116,7 @@ export class HomePage {
             field2: "b"
         }
         //var req = 
-        //https://safe-reef-70606.herokuapp.com/
-        //http://127.0.0.1:8081/setup
-        this.http.post('https://safe-reef-70606.herokuapp.com/setup',testData).subscribe(
+        this.http.post('http://127.0.0.1:8081/setup',testData).subscribe(
             data => {
                 console.log(data['_body']);
             }, error => {

@@ -15,6 +15,13 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PATCH, DELETE, OPTIONS');
+  next();
+});
+
 //Post data to the mongodb provided by node-red
 app.post('/setup', function(req, res){
   MongoClient.connect(url, function(err, db) {
@@ -177,10 +184,11 @@ MongoClient.connect(url, function(err, db) {
 
 //
 
+
 var createCol = function(db, data, callback) {
   //db.createCollection('parkingAvailability');
   //console.log(db.collection('parkingAvailability').stats())
-  db.collection('parkingAvailability').save(data, function(err, result) {
+  db.collection('parkingAvailability').insertOne(data, function(err, result) {
   //db.collection('parkingAvailability').insertOne( data, function(err, result) {
   if(err)
     {

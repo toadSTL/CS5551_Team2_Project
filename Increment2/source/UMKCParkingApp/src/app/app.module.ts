@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoginPage } from '../pages/login/login';
 import { SignUpPage } from '../pages/signup/signup';
 import { HomePage } from '../pages/home/home';
+
 import { SubmitAvailabilityPage} from '../pages/submitAvailability/submitAvailability';
 import { TabsPage } from '../pages/tabs/tabs';
 
@@ -17,6 +18,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { firebaseConfig } from './app.firebase.config';
+
+import { DecimalPipe } from '@angular/common';
+
 
 
 @NgModule({
@@ -41,11 +45,13 @@ import { firebaseConfig } from './app.firebase.config';
     LoginPage,
     SignUpPage,
     HomePage,
+    SubmitAvailabilityPage,
     TabsPage
   ],
   providers: [
     StatusBar,
     SplashScreen,
+    DecimalPipe,
     AngularFireAuthModule,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]

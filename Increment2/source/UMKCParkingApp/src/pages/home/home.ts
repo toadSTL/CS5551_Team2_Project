@@ -1,16 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef  } from '@angular/core';
 import { HttpClient} from "@angular/common/http";
 import { NavController } from 'ionic-angular';
 import { AlertController } from 'ionic-angular';
 import { SubmitAvailabilityPage} from '../submitAvailability/submitAvailability';
+import { DecimalPipe } from '@angular/common';
 
 /**
  * Interface for a single lot entry
  */
 export interface Lot {
-    id:         number,
+    _id:         number,
     name:       string,
-    maxNumber:  number,
+    address:    string,
+    location : {
+        lat: number,
+        lng: number
+    },
+    capacity:  number,
     group:      number,
     type:       string
 }
@@ -22,15 +28,13 @@ export interface LotList {
     lots: Lot[];
 }
 
+
 /**
  * Interface for availability
  */
  export interface Availability{
-    id:             number,
-    parkingLotId:   number,
-    userId:         string,
-    timeReported:   number,
-    availability:   number,
+    _id:            number,
+    availableSpots: number
  }
  
  /**
@@ -41,7 +45,7 @@ export interface AvailabilityList {
 }
  
  
-
+declare var google;
 
 @Component({
   selector: 'page-home',
@@ -49,12 +53,21 @@ export interface AvailabilityList {
 })
 export class HomePage {
 
+    @ViewChild('map') mapElement: ElementRef;
+    map: any;
+
     lotList: LotList;
     aList: AvailabilityList;
 
-  constructor(public navCtrl: NavController, public http: HttpClient, private alertCtrl: AlertController) {
+  constructor(private decimalPipe: DecimalPipe, 
+                public navCtrl: NavController, 
+                public http: HttpClient, 
+                private alertCtrl: AlertController) {
     this.loadLots('assets/data/lots.json');
     this.loadAvailability('assets/data/availability.json');
+    this.ldAvailability();
+    this.ldLots();
+    
   }
   
   ngAfterViewInit() {
@@ -77,37 +90,115 @@ export class HomePage {
     }
     
     
+
+    ionViewDidLoad(){
+        this.initMap();
+    }
+    
+    initMap() {
+        this.map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 17,
+                center: {lat: 39.033271, lng: -94.5787872},
+                disableDefaultUI: true,
+                gestureHandling: 'none',
+                zoomControl: false
+        });
+    }
+            
+    
+    /**
+     * Shoudl get lots from the server.js
+     */
     loadLots(filePath: string) {
         return this.http.get<LotList>(filePath).subscribe(
             data => { 
                 this.lotList = data; 
                 console.log(data); // works
+                console.log(this.lotList);
+                console.log(this.lotList[0]);
+                for(let i=0; i < this.lotList.length; i++){
+                    this.addMarker(this.lotList[i]);
+                    console.log(this.lotList[i]);
+                }
             }
         );
     };
     
+    
+    /**
+     * Shoudl get availability from the server.js
+     */
     loadAvailability(filePath: string){
         return this.http.get<AvailabilityList>(filePath).subscribe(
             data => { 
                 this.aList = data; 
+                
                 console.log(data); // works
             }
         );
+        
     };
     
-    /**
-     * Should take a lot name and return the availability for that lot
-     * Not totally certain, how to specify which lot name is clicked
-     */
-    displayAvailability(lotName: string){
-        console.log(lotName)
-        let alert = this.alertCtrl.create({
-            title: 'Test',
-            subTitle: '10% Spaces Available',
-            buttons: ['Dismiss']
-        });
-        alert.present();
+    ldLots(){
+        return this.http.get<availabilityList>('http://127.0.0.1:8081/getLots').subscribe(
+            data => {
+                //this.aList = data;
+                console.log("Lots from server");
+                console.log(data); //works.
+            }
+        )
+    }
     
+    ldAvailability(){
+        return this.http.get<availabilityList>('http://127.0.0.1:8081/getAvailability').subscribe(
+            data => {
+                //this.aList = data;
+                console.log("Availability from server");
+                console.log(data); //works.
+            }
+        )
+    }
+    
+    
+    displayAvail(lotID: number){
+        console.log(lotID);
+        console.log(this.aList.find(lot=>lot._id==lotID));
+        var avail = this.aList.find(lot=>lot._id == lotID).availableSpots;
+        console.log(avail);
+        var lotInfo = this.lotList.find(lot=>lot._id==lotID)
+        var av = ((avail/lotInfo.capacity)*100);
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('content').innerHTML = 
+                        lotInfo.name+'<br>'+
+                        'Availability: '+this.decimalPipe.transform(av ,'1.2-2')+'%<br>'+
+                        'Spots Available: '+avail+'<br>'+
+                        'Capacity: '+lotInfo.capacity+'<hr>';  
+    }
+    
+    
+    
+    //39.0313928
+    //-94.5770478
+    //(lat: number, lng: number)
+    //
+    addMarker(lot: Lot) {
+      var position = new google.maps.LatLng(lot.location.lat, lot.location.lng);
+      var lotMarker = new google.maps.Marker({position: position, title: lot.name});
+      lotMarker.setMap(this.map);
+      lotMarker.addListener('click', () => {
+        this.displayAvail(lot._id);
+      });
+    }
+    
+    
+    repAvail(){
+        console.log("report availability");
+        this.navCtrl.push(SubmitAvailabilityPage);
+    }
+    
+    dismiss(){
+        console.log("dismiss");
+        document.getElementById('results').style.display = 'none';
     }
     
     setUp(){
@@ -118,7 +209,7 @@ export class HomePage {
         //var req = 
         //https://safe-reef-70606.herokuapp.com/
         //http://127.0.0.1:8081/setup
-        this.http.post('https://safe-reef-70606.herokuapp.com/setup',testData).subscribe(
+        this.http.post('http://127.0.0.1:8081/setup',testData).subscribe(
             data => {
                 console.log(data['_body']);
             }, error => {
@@ -138,5 +229,7 @@ export class HomePage {
         //    alert( "failure message: " + JSON.stringify({data: data}));
         //});
     };
+
+
 
 }

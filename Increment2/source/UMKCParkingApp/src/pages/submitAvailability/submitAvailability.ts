@@ -8,9 +8,14 @@ import { AlertController } from 'ionic-angular';
  * Interface for a single lot entry
  */
 export interface Lot {
-    id:         number,
+    _id:         number,
     name:       string,
-    maxNumber:  number,
+    address:    string,
+    location : {
+        lat: number,
+        lng: number
+    },
+    capacity:  number,
     group:      number,
     type:       string
 }
@@ -26,11 +31,8 @@ export interface LotList {
  * Interface for availability
  */
  export interface Availability{
-    id:             number,
-    parkingLotId:   number,
-    userId:         string,
-    timeReported:   number,
-    availability:   number,
+    _id:            number,
+    availableSpots: number
  }
  
  /**
@@ -38,6 +40,15 @@ export interface LotList {
  */
 export interface AvailabilityList {
     availability: Availability[];
+}
+
+
+ /**
+ * Interface for selection
+ */
+export interface Selection {
+    lotName: string,
+    availability: number
 }
  
  
@@ -50,11 +61,11 @@ export interface AvailabilityList {
 export class SubmitAvailabilityPage {
 
     lotList: LotList;
-    aList: AvailabilityList;
+    
+    selection = {} as Selection;
 
   constructor(public navCtrl: NavController, public http: HttpClient, private alertCtrl: AlertController) {
     this.loadLots('assets/data/lots.json');
-    this.loadAvailability('assets/data/availability.json');
   }
   
   ngAfterViewInit() {
@@ -77,6 +88,17 @@ export class SubmitAvailabilityPage {
     }
     
     
+    /**
+     * Shoudl post availability to the server.js
+     */
+    submit(){
+        console.log("submit!");
+        console.log(this.selection);
+        var id = this.lotList.find(lot => lot.name==this.selection.lotName)._id;
+        console.log(id);
+        this.navCtrl.pop();
+    }
+    
     loadLots(filePath: string) {
         return this.http.get<LotList>(filePath).subscribe(
             data => { 
@@ -86,55 +108,6 @@ export class SubmitAvailabilityPage {
         );
     };
     
-    loadAvailability(filePath: string){
-        return this.http.get<AvailabilityList>(filePath).subscribe(
-            data => { 
-                this.aList = data; 
-                console.log(data); // works
-            }
-        );
-    };
     
-    /**
-     * Should take a lot name and return the availability for that lot
-     * Not totally certain, how to specify which lot name is clicked
-     */
-    displayAvailability(lotName: string){
-        console.log(lotName)
-        let alert = this.alertCtrl.create({
-            title: 'Test',
-            subTitle: '10% Spaces Available',
-            buttons: ['Dismiss']
-        });
-        alert.present();
-    
-    }
-    
-    setUp(){
-        var testData = {
-            field1: "a",
-            field2: "b"
-        }
-        //var req = 
-        this.http.post('http://127.0.0.1:8081/setup',testData).subscribe(
-            data => {
-                console.log(data['_body']);
-            }, error => {
-                console.log(error);
-            });
-        
-        //then(data => {
-        //    console.log(data.data);
-        //}).catch(error => {
-        //    console.log(error.status);
-        //});
-        //req.success(function(data) {
-        //    console.log(data);
-        //    alert("Successful!")
-        //});
-        //req.error(function(data) {
-        //    alert( "failure message: " + JSON.stringify({data: data}));
-        //});
-    };
 
 }

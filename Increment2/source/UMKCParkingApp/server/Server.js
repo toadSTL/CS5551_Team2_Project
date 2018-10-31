@@ -11,6 +11,8 @@ var cors = require('cors');
 var url = 'mongodb://umkcParkTest:umkcParkTest1@ds237735.mlab.com:37735/umkc-parking';
 var app = express();
 
+var db;
+
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -22,136 +24,15 @@ app.use(function (req, res, next) {
   next();
 });
 
-//Post data to the mongodb provided by node-red
-app.post('/setup', function(req, res){
-  MongoClient.connect(url, function(err, db) {
-    if (err) {
-      res.write("Connection Failed, Error while connecting to Database");
-      res.end();
-    } else {
-      console.log("Connected to db!");
-      createCol(db, req.body, function () {
-        res.write("Successfully Inserted");
-        res.end();
-      });
-    }
-  });
-});
-
-var initAvail = [
-  {
-    "_id":             1,
-    "lotID":   1,
-    "userID":         "gregLogin",
-    "timeReported":   1538189731656,
-    "availability":   15
-  },
-  {
-    "_id":             2,
-    "lotID":   3,
-    "userID":         "gregLogin",
-    "timeReported":   1538189913010,
-    "availability":   10
-  },
-  {
-    "_id":             3,
-    "lotID":   2,
-    "userID":         "gregLogin",
-    "timeReported":   1538189899338,
-    "availability":   90
-  },
-  {
-    "_id":             4,
-    "lotID":   4,
-    "userID":         "gregLogin",
-    "timeReported":   1538189925161,
-    "availability":   18
-  },
-  {
-    "_id":             5,
-    "lotID":   5,
-    "userID":         "gregLogin",
-    "timeReported":   1538189936380,
-    "availability":   50
-  },
-  {
-    "_id":             6,
-    "lotID":   6,
-    "userID":         "gregLogin",
-    "timeReported":   1538189948905,
-    "availability":   300
-  },
-  {
-    "_id":             7,
-    "lotID":   7,
-    "userID":         "gregLogin",
-    "timeReported":   1538189960851,
-    "availability":   800
-  }
-]
-
-
-var initLots = [
-  {
-    "_id":         1,
-    "name":       "UMKC Parking Lot 11",
-    "maxNumber":  20,
-    "group":      1,
-    "type":       "faculty"
-  },
-    {
-      "_id":         2,
-      "name":       "UMKC Parking Lot 9",
-      "maxNumber":  100,
-      "group":      2,
-      "type":       "student"
-    },
-    {
-      "_id":         3,
-      "name":       "UMKC Parking Lot 57",
-      "maxNumber":  15,
-      "group":      3,
-      "type":       "faculty"
-    },
-    {
-      "_id":         4,
-      "name":       "UMKC Parking Lot 10",
-      "maxNumber":  20,
-      "group":      4,
-      "type":       "faculty"
-    },
-    {
-      "_id":         5,
-      "name":       "UMKC Parking Lot 4",
-      "maxNumber":  60,
-      "group":      5,
-      "type":       "metered"
-    },
-    {
-      "_id":         6,
-      "name":       "UMKC Parking Lot 3",
-      "maxNumber":  330,
-      "group":      6,
-      "type":       "student"
-    },
-    {
-      "_id":         7,
-      "name":       "Rockhill Parking Structure",
-      "maxNumber":  900,
-      "group":      7,
-      "type":       "student"
-    }
-  ]
 
 //Initialize the db
 // db.createCollection("<collectionName>", { autoIndexId: false })
-
-MongoClient.connect(url, function(err, db) {
-  if (err) {
-    console.log(err);
-  } else {
+MongoClient.connect(url, function(err, database) {
+  if(err) {
+    return console.error(err);
+  }else{
     console.log("Connected to db!");
-    //createCol(db, req.body, function () {
+    db = database;
 
     var cursor = db.collection('availabilityUpdate').find();
     cursor.forEach(function(data){
@@ -162,7 +43,6 @@ MongoClient.connect(url, function(err, db) {
       }
     });
 
-
     //Used to initialize 'parkingAvailaibily' ccollection
     db.createCollection('parkingAvailability', { autoIndexId: false });
     initAvail.forEach(function(avail){
@@ -171,26 +51,45 @@ MongoClient.connect(url, function(err, db) {
       console.log("Successfully Inserted");
     });
     //db.collection('parkingAvailability').insertMany(initAvail);
-
     //Used to initialize 'parkingAvailaibily' ccollection
     db.createCollection('parkingLots', { autoIndexId: false });
     db.collection('parkingLots').insertMany(initLots);
 
     //Bring the db up-to-date
-
-
   }
 });
 
-//
+//Post data to the mongodb
+app.post('/setup', function(req, res){
 
+  //MongoClient.connect(url, function(err, db) {
+  //
+  //
+  //  if (err) {
+  //    res.write("Connection Failed, Error while connecting to Database");
+  //    res.end();
+  //  } else {
+  //    console.log("Connected to db!");
+  //    createCol(db, req.body, function () {
+  //      res.write("Successfully Inserted");
+  //      res.end();
+  //    });
+  //  }
+  //});
+
+  console.log("Within the Post/setup method!");
+  createCol(db, req.body, function () {
+    res.write("Successfully Inserted");
+    res.end();
+  });
+});
 
 var createCol = function(db, data, callback) {
   //db.createCollection('parkingAvailability');
   //console.log(db.collection('parkingAvailability').stats())
   db.collection('parkingAvailability').insertOne(data, function(err, result) {
-  //db.collection('parkingAvailability').insertOne( data, function(err, result) {
-  if(err)
+    //db.collection('parkingAvailability').insertOne( data, function(err, result) {
+    if(err)
     {
       res.write("Insert Failed, Error while inserting document");
       res.end();
@@ -200,13 +99,73 @@ var createCol = function(db, data, callback) {
   });
 };
 
+var initAvail = [
+  {
+    "_id":            1,
+    "availableSpots": 100
+  },
+  {
+    "_id":            2,
+    "availableSpots": 50
+  }
+];
+
+
+var initLots = [
+  {
+    "_id":         1,
+    "name":       "Rockhill Parking Structure",
+    "address":    "5277 Charlotte St, Kansas City, MO 64110, USA",
+    "location" : {
+      "lat": 39.03205,
+      "lng": -94.5765
+    },
+    "capacity":  900,
+    "group":      1,
+    "type":       "student"
+  },
+  {
+    "_id":         2,
+    "name":       "UMKC Parking Lot 4",
+    "address":    "4921 Rockhill Rd, Kansas City, MO 64110",
+    "location" : {
+      "lat": 39.0363009,
+      "lng": -94.576883
+    },
+    "capacity":  330,
+    "group":      2,
+    "type":       "student"
+  }
+];
 
 
 //Want to post to mongodb provided by node-red
-app.get('/posts', function(req, res) {
+app.get('/reportAvailability', function(req, res) {
 
     console.log("posts!");
 
+});
+
+app.get('/getAvailability', function(req, res){
+  var cursor = db.collection('parkingAvailability').find();
+  cursor.forEach(function(data){
+    //Per lotID
+    if(data.payload._id == 1){
+      //update the availability of that lot
+      console.log(data);
+    }
+  });
+});
+
+app.get('/getLots', function(req, res){
+  var cursor = db.collection('parkingLots').find();
+  cursor.forEach(function(data){
+    //Per lotID
+    if(data.payload._id == 1){
+      //update the availability of that lot
+      console.log(data);
+    }
+  });
 });
 
 

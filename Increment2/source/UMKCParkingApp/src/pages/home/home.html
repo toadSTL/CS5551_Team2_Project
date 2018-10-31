@@ -5,12 +5,13 @@
 </ion-header>
 
 <ion-content padding>
-    <ion-list>
-        <button ion-item (click)="displayAvailability(lot.name)" *ngFor="let lot of lotList">
-            {{lot.name}}
-        </button>
-        <button ion-item (click)="setUp()">
-            Test SetUp
-        </button>
-    </ion-list>
+    <div id="results" style="display:none">
+        <div id="floating-panel">
+            <div id="content">
+            </div>
+                <button ion-button (click)="repAvail()">Report Availability</button><br>
+                <button ion-button (click)="dismiss()">Dismiss</button>
+        </div>
+    </div>
+    <div #map id="map"></div>
 </ion-content>

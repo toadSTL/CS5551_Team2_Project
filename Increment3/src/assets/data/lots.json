@@ -1,0 +1,26 @@
+[
+    {
+        "_id":         1,
+        "name":       "Rockhill Parking Structure",
+        "address":    "5277 Charlotte St, Kansas City, MO 64110, USA",
+        "location" : {
+            "lat": 39.03205,
+            "lng": -94.5765
+        },
+        "capacity":  900,
+        "group":      1,
+        "type":       "student"
+    },
+    {
+        "_id":         2,
+        "name":       "UMKC Parking Lot 4",
+        "address":    "4921 Rockhill Rd, Kansas City, MO 64110",
+        "location" : {
+            "lat": 39.0363009,
+            "lng": -94.576883
+        },
+        "capacity":  330,
+        "group":      2,
+        "type":       "student"
+    }
+]

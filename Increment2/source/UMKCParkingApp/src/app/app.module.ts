@@ -8,7 +8,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoginPage } from '../pages/login/login';
 import { SignUpPage } from '../pages/signup/signup';
 import { HomePage } from '../pages/home/home';
-
 import { SubmitAvailabilityPage} from '../pages/submitAvailability/submitAvailability';
 import { TabsPage } from '../pages/tabs/tabs';
 

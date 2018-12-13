@@ -8,7 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoginPage } from '../pages/login/login';
 import { SignUpPage } from '../pages/signup/signup';
 import { HomePage } from '../pages/home/home';
-
+import { ReserveSpotPage } from '../pages/reserveSpot/reserveSpot';
 import { SubmitAvailabilityPage} from '../pages/submitAvailability/submitAvailability';
 import { TabsPage } from '../pages/tabs/tabs';
 
@@ -30,6 +30,7 @@ import { DecimalPipe } from '@angular/common';
     SignUpPage,
     HomePage,
     SubmitAvailabilityPage,
+    ReserveSpotPage,
     TabsPage
   ],
   imports: [
@@ -46,6 +47,7 @@ import { DecimalPipe } from '@angular/common';
     SignUpPage,
     HomePage,
     SubmitAvailabilityPage,
+    ReserveSpotPage,
     TabsPage
   ],
   providers: [

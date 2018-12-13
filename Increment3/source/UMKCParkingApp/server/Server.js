@@ -220,6 +220,29 @@ app.post('/submitAvailability', function(req,res){
   res.send('POST request successful')
 });
 
+// app.post('/reserveSpot', function(req,res){
+//   console.log(req.body);
+//   console.log(req.body._id);
+//   // console.log(req.body.avail);
+//   db.collection('parkingAvailability').deleteOne({_id: req.body._id}, function(err, result) {
+//     if (err) {
+//       handleError(res, err.message, "Failed to delete!");
+//     } else {
+//       //res.status(204).end();
+//     }
+//   });
+//
+//   var avail = {
+//     "_id":            req.body._id,
+//     "availableSpots": parseInt(avail.find())
+//   };
+//
+//   console.log(avail);
+//
+//   db.collection('parkingAvailability').insertOne(avail);
+//   console.log(res)
+//   res.send('POST request successful')
+// });
 
 var server = app.listen(8081,function () {
     var host = server.address().address;
